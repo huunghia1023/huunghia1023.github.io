@@ -1,0 +1,26 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { LANGS, url, otherLang, langParam, type Lang } from '../../../i18n/ui';
+import { getPosts, postSlug, hasTranslation } from '../../../utils/posts';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of LANGS) {
+    for (const post of await getPosts(lang)) {
+      paths.push({ params: { lang: langParam(lang), slug: postSlug(post) }, props: { post, lang } });
+    }
+  }
+  return paths;
+}
+const { post, lang } = Astro.props as { post: Awaited<ReturnType<typeof getPosts>>[number]; lang: Lang };
+const { Content } = await render(post);
+const other = otherLang(lang);
+const slug = postSlug(post);
+// Link to the translated post if it exists, otherwise to the blog list of the other language.
+const altHref = (await hasTranslation(other, slug)) ? url(other, `blog/${slug}`) : url(other, 'blog');
+---
+
+<PostLayout post={post} lang={lang} altHref={altHref}>
+  <Content />
+</PostLayout>

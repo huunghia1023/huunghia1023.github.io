@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LANGS, ui, langParam, type Lang } from '../../i18n/ui';
+import { SOCIAL } from '../../config';
+
+export function getStaticPaths() {
+  return LANGS.map((l) => ({ params: { lang: langParam(l) }, props: { lang: l } }));
+}
+const { lang } = Astro.props as { lang: Lang };
+const t = ui[lang];
+---
+
+<BaseLayout lang={lang} title={t.nav.about}>
+  {lang === 'en' ? (
+    <div class="prose">
+      <h1>About me</h1>
+      <p>Hi! I’m Nghia, a software developer from Vietnam.</p>
+      <p>
+        My main experience is with <strong>Angular</strong>, <strong>C#</strong> and <strong>.NET</strong>. Now I am
+        moving toward <strong>AI engineering</strong>: RAG, LLM apps, agents, and everything around them.
+      </p>
+      <h2>What you will find here</h2>
+      <ul>
+        <li>What I learn and how I improve as a software engineer</li>
+        <li>AI engineering topics (RAG, LLM apps, agents)</li>
+        <li>Career notes: growth, job security, building skills</li>
+        <li>Short learning-log notes about what I studied this week</li>
+      </ul>
+      <p>English is not my first language, so please be kind to my mistakes. 🙂</p>
+      <h2>Find me</h2>
+      <ul>
+        <li><a href={SOCIAL.github}>GitHub</a></li>
+        <li><a href={SOCIAL.youtube}>YouTube</a></li>
+      </ul>
+    </div>
+  ) : (
+    <div class="prose">
+      <h1>Giới thiệu</h1>
+      <p>Xin chào! Mình là Nghĩa, lập trình viên đến từ Việt Nam.</p>
+      <p>
+        Kinh nghiệm chính của mình là <strong>Angular</strong>, <strong>C#</strong> và <strong>.NET</strong>. Hiện
+        mình đang chuyển hướng sang <strong>AI engineering</strong>: RAG, ứng dụng LLM, agent và những thứ xung quanh.
+      </p>
+      <h2>Bạn sẽ thấy gì ở đây</h2>
+      <ul>
+        <li>Những gì mình học được và cách mình tiến bộ trong nghề</li>
+        <li>Chủ đề AI engineering (RAG, ứng dụng LLM, agent)</li>
+        <li>Ghi chép về sự nghiệp: phát triển bản thân, sự ổn định công việc, xây dựng kỹ năng</li>
+        <li>Nhật ký học tập ngắn về những gì mình học trong tuần</li>
+      </ul>
+      <h2>Liên hệ</h2>
+      <ul>
+        <li><a href={SOCIAL.github}>GitHub</a></li>
+        <li><a href={SOCIAL.youtube}>YouTube</a></li>
+      </ul>
+    </div>
+  )}
+</BaseLayout>

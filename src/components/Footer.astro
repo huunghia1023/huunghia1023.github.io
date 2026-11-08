@@ -1,0 +1,25 @@
+---
+import { ui, url, type Lang } from '../i18n/ui';
+import { SOCIAL, AUTHOR } from '../config';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="links">
+      <strong>{t.follow}:</strong>
+      <a href={SOCIAL.youtube} rel="me noopener" target="_blank">YouTube</a>
+      <a href={SOCIAL.github} rel="me noopener" target="_blank">GitHub</a>
+      <a href={url(lang, 'rss.xml').replace(/\/$/, '')}>{t.rss}</a>
+    </p>
+    <p class="small">© {new Date().getFullYear()} {AUTHOR}. {t.footer}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 2rem 0; color: var(--muted); }
+  .links { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0 0 0.5rem; }
+  .small { margin: 0; font-size: 0.9rem; }
+</style>

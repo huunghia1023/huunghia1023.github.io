@@ -1,0 +1,28 @@
+---
+import { tagLabels, url, type Lang } from '../i18n/ui';
+import { postSlug, type Post } from '../utils/posts';
+interface Props { post: Post; lang: Lang }
+const { post, lang } = Astro.props;
+const { title, date, summary, tags, draft } = post.data;
+const href = url(lang, `blog/${postSlug(post)}`);
+---
+
+<article class="card">
+  <h3><a href={href}>{title}</a>{draft && <span class="draft">DRAFT</span>}</h3>
+  <div class="meta">
+    <time datetime={date.toISOString()}>
+      {date.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-US', { dateStyle: 'long', timeZone: 'UTC' })}
+    </time>
+    {tags.map((t) => <a class="tag" href={url(lang, `tags/${t}`)}>{tagLabels[lang][t]}</a>)}
+  </div>
+  <p>{summary}</p>
+</article>
+
+<style>
+  .card { padding: 1.25rem 0; border-bottom: 1px solid var(--border); }
+  .card h3 { margin: 0 0 0.25rem; font-size: 1.3rem; }
+  .card h3 a { color: var(--text); text-decoration: none; }
+  .card h3 a:hover { color: var(--accent); }
+  .card p { margin: 0.5rem 0 0; color: var(--muted); }
+  .draft { margin-left: 0.5rem; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 4px; background: #f59e0b; color: #000; vertical-align: middle; }
+</style>

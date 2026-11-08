@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { LANGS, ui, tagLabels, url, langParam, type Lang } from '../../../i18n/ui';
+import { TAGS } from '../../../config';
+import { getPosts } from '../../../utils/posts';
+
+export function getStaticPaths() {
+  return LANGS.map((l) => ({ params: { lang: langParam(l) }, props: { lang: l } }));
+}
+const { lang } = Astro.props as { lang: Lang };
+const t = ui[lang];
+const posts = await getPosts(lang);
+const count = (tag: string) => posts.filter((p) => p.data.tags.includes(tag as any)).length;
+---
+
+<BaseLayout lang={lang} title={t.allTags}>
+  <h1>{t.allTags}</h1>
+  <ul class="taglist">
+    {TAGS.map((tag) => (
+      <li><a href={url(lang, `tags/${tag}`)}>{tagLabels[lang][tag]}</a> <span>({count(tag)})</span></li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .taglist { list-style: none; padding: 0; font-size: 1.15rem; }
+  .taglist li { margin: 0.5rem 0; }
+  .taglist span { color: var(--muted); }
+</style>

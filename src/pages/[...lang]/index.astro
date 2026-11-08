@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { LANGS, ui, url, langParam, type Lang } from '../../i18n/ui';
+import { getPosts } from '../../utils/posts';
+
+export function getStaticPaths() {
+  return LANGS.map((l) => ({ params: { lang: langParam(l) }, props: { lang: l } }));
+}
+const { lang } = Astro.props as { lang: Lang };
+const t = ui[lang];
+const posts = (await getPosts(lang)).slice(0, 5);
+---
+
+<BaseLayout lang={lang}>
+  <section>
+    <h1>{t.heroTitle}</h1>
+    <p>{t.heroText}</p>
+  </section>
+  <div class="section-title">
+    <h2>{t.recentPosts}</h2>
+    <a href={url(lang, 'blog')}>{t.allPosts} →</a>
+  </div>
+  {posts.length === 0 ? <p class="empty">{t.noPosts}</p> : posts.map((p) => <PostCard post={p} lang={lang} />)}
+</BaseLayout>

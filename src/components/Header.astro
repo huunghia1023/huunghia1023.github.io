@@ -1,0 +1,56 @@
+---
+import { ui, url, otherLang, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; altHref: string }
+const { lang, altHref } = Astro.props;
+const t = ui[lang];
+const items = [
+  { label: t.nav.home, href: url(lang) },
+  { label: t.nav.blog, href: url(lang, 'blog') },
+  { label: t.nav.tags, href: url(lang, 'tags') },
+  { label: t.nav.about, href: url(lang, 'about') },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === url(lang) ? path === href : path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={url(lang)}>{t.siteTitle}</a>
+    <nav aria-label="Main">
+      {items.map((i) => <a href={i.href} aria-current={isActive(i.href) ? 'page' : undefined}>{i.label}</a>)}
+    </nav>
+    <div class="actions">
+      <a class="pill" href={altHref} hreflang={otherLang(lang)} lang={otherLang(lang)} aria-label={t.switchLangLabel}>
+        🌐 {t.switchLang}
+      </a>
+      <button class="pill" id="theme-toggle" type="button" aria-label={t.theme} title={t.theme}>
+        <span class="icon-light">☀️</span><span class="icon-dark">🌙</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+</script>
+
+<style>
+  .site-header { border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; padding-block: 0.75rem; }
+  .brand { font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+  nav { display: flex; gap: 1rem; flex: 1; flex-wrap: wrap; }
+  nav a { color: var(--muted); text-decoration: none; padding: 0.15rem 0; border-bottom: 2px solid transparent; }
+  nav a:hover { color: var(--text); }
+  nav a[aria-current='page'] { color: var(--text); border-bottom-color: var(--accent); }
+  .actions { display: flex; gap: 0.5rem; align-items: center; }
+  .pill { border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); border-radius: 999px; padding: 0.3rem 0.75rem; font: inherit; font-size: 0.9rem; cursor: pointer; text-decoration: none; }
+  .pill:hover { border-color: var(--accent); }
+  .icon-dark { display: none; }
+  :global(:root[data-theme='dark']) .icon-light { display: none; }
+  :global(:root[data-theme='dark']) .icon-dark { display: inline; }
+  @media (max-width: 640px) { nav { order: 3; flex-basis: 100%; } .actions { margin-left: auto; } }
+</style>
